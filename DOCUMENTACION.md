@@ -101,7 +101,7 @@ En el lado del backend utilizaremos Supabase como servicio backend.
 Este servicio nos permite almacenar la información en **bases de datos relacionales** en un entorno basado en **postgreSQL.**
 
 También nos ofrece, entre otros:
-    - Un sistema de autenticación basado en proveedores como google, github, etc.
+    - Un sistema de autenticación basado en proveedores como google, github, etc
 
     - Un sistema de control de accesos según roles a través de las políticas de permisos.
 
