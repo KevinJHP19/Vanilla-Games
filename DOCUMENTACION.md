@@ -146,7 +146,7 @@ Lo primero es definir los casos de uso para esta versión. Una primera aproximac
 
 ![alt text](image.png)
 
-## Casos de uso específicos y diagramas de flujo.
+# Casos de uso específicos y diagramas de flujo.
 
 En el primer apartado 'Requisitos y diagrama de casos de uso' para esta versión 1.0, hemos definido de manera general los **casos de uso** que se contemplan para cada actor y los hemos reflejado en un **diagrama de casos de uso**.
 
