@@ -205,7 +205,7 @@ Es el momento de ser más concretos y detenernos a reflexionar en cada uno de lo
 
 3a. Las credenciales son incorrectas: el sistema muestra un mensaje de error y no crea la sesión.
 
-# 4.Cerrar sesión
+## 4.Cerrar sesión
 
 **Actores**: Usuario registrado.
 
