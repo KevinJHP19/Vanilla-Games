@@ -427,3 +427,24 @@ Esta vista permite **editar o borrar cualquier proyecto** haciendo click en los 
 Esta vista permite **editar los datos de los usuarios**. Por supuesto es solo accesible para los administradores.
 
 En esta vista, el método para editar la información es diferentes. Aquí los datos **aparecen sobre 'inputs'**, de manera que al hacer clic sobre ellos, aparecerá el cursor de edición. Se pueden modificar todos los datos (en especial el 'estado' y el 'rol' del usuario) excepto el email.
+
+#Hist3b - test de usuarios inicial
+
+## Prime Test de Usabilidad
+
+Tal y como hemos comentado en el apartado ' Diseño centradp enel usario', una de la premisas de esta metodologia consiste en realizar evaluacion constantes para detectar los posibles problemas de usabilidad cuanto antes mejor. Por lo que una buena idea es realizar un primer yest de usabilidad.
+
+>[!INFO]
+   >Maas adelante, hablaremos con mas detalle de la usabilidad y las diferente tecnicas para evaluarla.
+
+Por el momento os adelanto que la tecnica mas utilizada para evaluar la usabiludad son los '**tests de usuario**'.
+
+Estoas consisten en crear una bateria de acciones que el usuario debe realizar, para detectar si existe algun problema en la interacion con la aplicacion. A continuacion vamos pidiendo a un usuario focal (una presona que este dentro del target de usuarios a quiren va dirigida la app) que realice cada tarea, mostrandole los bocetos que apareceran en cada interaccion.
+Por ejemplo, si hace clic sobre el item de menu 'login' le mostraremos el boceto de la pagina 'login'.
+
+Para este primer test hemos preparado las siguientes acciones:
+
+   -Suponiendo que eres un usuario no registrado:
+
+   
+
