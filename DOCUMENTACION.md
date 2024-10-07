@@ -353,7 +353,7 @@ Este proceso incluye diseñar los **bocetos**, los **wireframes** y los mockups 
 Sin duda, el primer paso, debe ser dibujar los bocetos, asi que, busca un lápiz, una goma de borrar y un puñado de papel, ¡y manos a la obra!
 
 ## Diseño de Bocetos
->[!INFO]
+> [!INFO]
    >Recuerda que los **bocetos son dibujos a mano alzada** que representan ideas de diseño de manera rápida y no detallada. Los bocetos suelen ser utilizados al inicio del proceso de diseño para explorar diferentes ideas y soluciones de diseño de manera rápida y económica. Los bocetos son ideales para hacer borradores rápidos y para discutir ideas con colegas y clientes.
 ### Home y menus usuarios
 ![Home y menus usuarios](image-1.png)
@@ -428,13 +428,13 @@ Esta vista permite **editar los datos de los usuarios**. Por supuesto es solo ac
 
 En esta vista, el método para editar la información es diferentes. Aquí los datos **aparecen sobre 'inputs'**, de manera que al hacer clic sobre ellos, aparecerá el cursor de edición. Se pueden modificar todos los datos (en especial el 'estado' y el 'rol' del usuario) excepto el email.
 
-#Hist3b - test de usuarios inicial
+# Hist3b - test de usuarios inicial
 
 ## Prime Test de Usabilidad
 
 Tal y como hemos comentado en el apartado ' Diseño centradp enel usario', una de la premisas de esta metodologia consiste en realizar evaluacion constantes para detectar los posibles problemas de usabilidad cuanto antes mejor. Por lo que una buena idea es realizar un primer yest de usabilidad.
 
->[!INFO]
+> [!INFO]
    >Maas adelante, hablaremos con mas detalle de la usabilidad y las diferente tecnicas para evaluarla.
 
 Por el momento os adelanto que la tecnica mas utilizada para evaluar la usabiludad son los '**tests de usuario**'.
@@ -444,7 +444,49 @@ Por ejemplo, si hace clic sobre el item de menu 'login' le mostraremos el boceto
 
 Para este primer test hemos preparado las siguientes acciones:
 
-   -Suponiendo que eres un usuario no registrado:
+   - Suponiendo que eres un **usuario no registrado**:
 
-   
+      -  Accede a la información general 'A cerca de' de esta web.
+      - Regístrate.
+      - Logueate.
+      - Modifica tu perfil añadiendo una imagen de avatar.
+      - Busca un proyecto llamado 'Tetris'.
+      - Accede al detalle de este proyecto.
+      - Cierra sesión.
+   - Suponiendo que eres un usuario con rol **'Desarrollador'**:
+      - Crea un proyecto nuevo.
+      - Accede a la lista de tus proyectos.
+      - Muestra el detalle de tu nuevo proyecto.
+      - Edita tu proyecto cambiando la descripción.
+      - Borra tu proyecto.
+   - Suponiendo que eres un usuario con rol '**Administrador**':
+      - Muestra la lista de proyectos.
+      - Borra un proyecto.
+      - Modifica el nombre de un proyecto.
+      - Muestra la listra de todos los usuarios registrados.
+      - Canvia el rol de uno de ellos.
+      - Modifica la imagen de su avatar.
+> [!NOTE]
+   >Las acciones del test de ususarios han sido realizadas por una **persona de 20 años**, con **estudios universitarios** y acostumbrado a **navegar por la red** y usar **herramientas ofimaticas**.
 
+## Conclusiones y modificaciones
+
+De este primer test de usuario se desprenden las siguientes conclusiones:
+
+   - La vista de proyectos en forma de tabla no es muy atractiva.
+   - El usuario ha tenido dificultades a la hora de intentar modificar la imagen avatar de un usuario.
+Para mejorar estos pequeños problemas de usabilidad vamos a tomar las siguientes acciones:
+
+   - En la vista de proyectos vamos crear un par de botones para poder alternar entre ver los proyectos en forma de tabla o en forma de tarjetas.
+   - En la vista de administración de usuarios, añadir un pequeño icono (un lápiz) sobre la imagen del avatar del usuario para que se intuya que, al hacer clic sobre la imagen, se accede a la ventana de modificación de perfil.
+Estos serían los bocetos actualizados:
+
+## Vista de proyectos
+
+Poner la imagen de los nuevos bocetos
+
+## Vista del Panel de adminitraicion de usuarios.
+
+Poner la imagen de los nuevos bocetos
+
+Ahora que tenemos los bocetos creados y testeados, es el moemnto de pasar al siguiente nivel:**El diseño de los wireframes**.
