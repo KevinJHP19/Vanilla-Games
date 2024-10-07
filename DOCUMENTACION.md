@@ -490,3 +490,34 @@ Poner la imagen de los nuevos bocetos
 Poner la imagen de los nuevos bocetos
 
 Ahora que tenemos los bocetos creados y testeados, es el moemnto de pasar al siguiente nivel:**El diseño de los wireframes**.
+
+# Hist4 - Wireframe, mockup y guia de estilos
+En el apartado anterior hemos diseñado y testeado los bocetos para la versión 1.0 de nuestro proyecto.
+
+El siguiente paso, si nos basamos en el DCU (Diseño centrado en el usuario), sería diseñar los wireframes y, una vez tenemos los wireframes, los mockups junto a la guía de estilos.
+
+> [!RECUERDA QUE..]
+   > - Un **boceto** es un dibujo rapido que represant ideas.
+   > - Un **wireframe** es una representacion estructural y esquematica.
+   > - Un **mockup** es una version visualmente detallada del diseño y
+   > - Una **guia de estilos** establece las pautas visuales y de diseño para un proyecto.
+
+Un proyecto de mayor envergadura requeriría de un equipo de trabajo con más de un perfil. La tarea de diseñar la interficie corresponde, por un lado, al **arquitecto de la información** y por otro, a un diseñador **gráfico**.
+> [!¿QUE ES UN ARQUITECTO DE LA INFORMACION?]
+   >En diseño web, un **arquitecto de la información** (IA, por sus siglas en inglés) es un profesional encargado de organizar y estructurar la información de un sitio web de manera clara y coherente para mejorar la experiencia del usuario. Su objetivo principal es facilitar la navegación y la búsqueda de información, asegurándose de que los usuarios encuentren lo que están buscando de manera eficiente.
+
+> [!¿Y QUE PAPEL JUEGA UN DISEÑADOR GRAFICO EN LA CREACION DE LOS MOCKUPS Y LA GUIA DE ESTILOS?]
+   >**La misión de un diseñador gráfico en la elaboración de mockups es** crear representaciones visuales detalladas del diseño final de una interfaz o página web. Su objetivo es plasmar de manera precisa y visualmente atractiva los elementos visuales, como colores, tipografía, imágenes y estilos gráficos, que se utilizarán en el desarrollo del sitio web.
+
+## Y nosotros, ¿necesitamos wireframe? ¿y mockup? ¿y guía de estilos?
+
+En nuestro caso, como el proyecto es muy básico, no nos vamos a centrar en aquellas tareas que corresponderían a un arquitecto de la información ni a un diseñador gráfico.
+
+El mapa web de nuestra aplicación se limita a dar acceso a los proyectos y la administración de los usuarios. Sería tan sencillo com este:
+
+En cuanto al diseño gráfico, aunque es una misión emocionante, nos vamos a limitar a trabajar con un **tema de bootstrap** utilizando **Bootswatch**, respetando, a priori, su paleta de colores y modificando, solo en algunos casos, algunos detalles como la fuente para los títulos.
+
+> [!¿QUE ES BOOTSWATCH?]
+   >**Bootswatch es una biblioteca de temas (themes) para Bootstrap**, un popular framework de desarrollo web.
+
+   >Al utilizar Bootswatch, puedes **cambiar fácilmente la apariencia de tu proyecto** de Bootstrap simplemente importando los archivos CSS correspondientes al tema deseado. Esto te permite ahorrar tiempo y esfuerzo al no tener que crear los estilos desde cero.
