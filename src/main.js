@@ -1,24 +1,16 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import { header } from './componentes/header.js'
+import { footer } from './componentes/footer.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
-
-setupCounter(document.querySelector('#counter'))
+async function cargarVista () {
+    const componente = await import('./vistas/homeVista.js')
+    const vista = componente.default
+    // Inyectamos la vista home
+    document.querySelector('main').innerHTML = vista.template
+  }
+  cargarVista()
+  
+  //Inyectamos el componente header
+  document.querySelector('header').innerHTML = header.template
+  
+  //Inyectamos el componente footer
+  document.querySelector('footer').innerHTML = footer.template
