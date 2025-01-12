@@ -7,7 +7,7 @@ import 'bootstrap'
 import './scss/styles.scss'
 
 async function cargarVista () {
-    const componente = await import('./vistas/homeVista.js')
+    const componente = await import('./vistas/proyectoDetalleVista.js')
     const vista = componente.default
     // Inyectamos la vista home
     document.querySelector('main').innerHTML = vista.template
