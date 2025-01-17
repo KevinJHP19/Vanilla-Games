@@ -1,4 +1,7 @@
 
+import { ls } from '../componentes/funciones.js'
+import { menuRol, menuUsuario } from './menus.js'
+
 export const header = {
     template: // html
     `
@@ -26,6 +29,9 @@ export const header = {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+
+      <!-- Menu comun para todos los usuarios -->
   <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
     <li class="nav-item">
       <a class="nav-link active router-link" aria-current="page" href="#/home">Home</a>
@@ -37,6 +43,12 @@ export const header = {
       <a class="nav-link router-link" aria-current="page" href="#">A cerca de</a>
     </li>
   </ul>
+
+  <!-- Aqui va el menu rol -->
+  <div id="menuRol"></div>
+
+  <!--Aqui va el menu usuario -->
+  <div id="menuUsuario"></div>
   <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
     <li class="nav-item">
       <a class="ms-2 btn btn-success router-link" href="#/login">
@@ -56,7 +68,36 @@ export const header = {
     </div>
   </nav>
   
-    `
+    `,
+    script: ()=>{
+      console.log('header Cargado')
+
+      const rolUsuario = ls.getusuario().rol
+
+      switch (rolUsuario) {
+        case 'registrado':
+          //menu rol
+          document.querySelector('#menuRol').innerHTML = menuRol.templateRegistrado
+          //menu usuario
+          document.querySelector('#menuUsuario').innerHTML = menuUsuario.templateRegistrado
+          break
+        case 'desarrollador':
+
+          document.querySelector('#menuRol').innerHTML = menuRol.templateAdmin
+      }
+      //simulamos el inicio de sesion de un usuario
+
+      const usuario = {
+        email: 'manolito@email.com',
+        rol: 'alumno'
+      }
+      ls.setUsuario(usuario)
+      console.log('usuario guardado')
+
+      // leemos el usuario del localStorage
+      const usuariologueado = ls.getusuario()
+      console.log('usuario del localstorage: ', usuariologueado)
+    }
   }
   
   
