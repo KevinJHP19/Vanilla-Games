@@ -82,8 +82,19 @@ export const header = {
           document.querySelector('#menuUsuario').innerHTML = menuUsuario.templateRegistrado
           break
         case 'desarrollador':
-
+          //menu rol
+          document.querySelector('#menuRol').innerHTML = menuRol.templateDesarrollador
+          // menu usuario
+          document.querySelector('#menuUsuario').innerHTML = menuUsuario.templateDesarrollador
+          break
+        case 'admin':
           document.querySelector('#menuRol').innerHTML = menuRol.templateAdmin
+          
+          document.querySelector('#menuUsuario').innerHTML = menuUsuario.templateAdmin
+          break
+        default : // Para usuario anonimos
+        //menu rol
+        document.querySelector('#menuRol').innerHTML = menuRol.templateAnonimo
       }
       //simulamos el inicio de sesion de un usuario
 
@@ -91,6 +102,8 @@ export const header = {
         email: 'manolito@email.com',
         rol: 'alumno'
       }
+      
+    
       ls.setUsuario(usuario)
       console.log('usuario guardado')
 
