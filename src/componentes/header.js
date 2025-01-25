@@ -102,7 +102,9 @@ export const header = {
         email: 'manolito@email.com',
         rol: 'alumno'
       }
-      
+      ls.setUsuario({ email: 'chafardera@gmail.com',
+        rol: 'registrado'
+      })
     
       ls.setUsuario(usuario)
       console.log('usuario guardado')
