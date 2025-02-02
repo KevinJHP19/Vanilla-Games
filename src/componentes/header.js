@@ -1,6 +1,7 @@
 
 import { ls } from './funciones.js'
 import { menuRol, menuUsuario } from './menus.js'
+import { editarPerfil } from './editarPerfil.js'
 
 export const header = {
     template: // html
@@ -50,13 +51,19 @@ export const header = {
   <!--Aqui va el menu usuario -->
   <div id="menuUsuario"></div>
   
+  
       </div>
     </div>
   </nav>
-  
+  <div id"modal">
+  </div>
     `,
-    script: ()=>{
+    script: () => {
       console.log('header Cargado')
+
+      document.querySelector("#modal").innerHTML = editarPerfil.template;
+
+      ls.setUsuario({ email: "chafardera@gmial.com", rol: "registrado" });
 
       const rolUsuario = ls.getUsuario().rol
 
@@ -85,16 +92,7 @@ export const header = {
       //simulamos el inicio de sesion de un usuario
 
       
-      ls.setUsuario({ email: 'chafardera@gmail.com',
-        rol: 'registrado'
-      })
     
-      
-      console.log('usuario guardado')
-
-      // leemos el usuario del localStorage
-      const usuariologueado = ls.getUsuario()
-      console.log('usuario del localstorage: ', usuariologueado)
     }
   }
   

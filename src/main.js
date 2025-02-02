@@ -10,15 +10,15 @@ import { enrutador } from "./componentes/enrutador"
 // Importamos la vista por defecto (que será home)
 
 
-// Inyectamos el componente header
-document.querySelector('header').innerHTML = header.template
+//Inyectamos el componente header
+document.querySelector("header").innerHTML = header.template;
 header.script()
-// Inyectamos el componente footer
-document.querySelector('footer').innerHTML = footer.template
+//Inyectamos el componente footer
+document.querySelector("footer").innerHTML = footer.template;
 
-enrutador.observadorRutas()
+enrutador.observadorRutas();
 // Cargamos la página home
-window.location = '#/home'
+window.location = "#/home";
 
 
 
