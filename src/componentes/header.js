@@ -49,21 +49,7 @@ export const header = {
 
   <!--Aqui va el menu usuario -->
   <div id="menuUsuario"></div>
-  <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
-    <li class="nav-item">
-      <a class="ms-2 btn btn-success router-link" href="#/login">
-        Iniciar sesión
-        <i class="bi bi-box-arrow-in-right"></i>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="ms-2 btn btn-outline-light router-link" href="#/registro">
-        Regístrate
-        <i class="bi bi-box-arrow-in-right"></i>
-      </a>
-    </li>
-  </ul>
-        </ul>
+  
       </div>
     </div>
   </nav>
@@ -98,10 +84,7 @@ export const header = {
       }
       //simulamos el inicio de sesion de un usuario
 
-      const usuario = {
-        email: 'manolito@email.com',
-        rol: 'alumno'
-      }
+      
       ls.setUsuario({ email: 'chafardera@gmail.com',
         rol: 'registrado'
       })
