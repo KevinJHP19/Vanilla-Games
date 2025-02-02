@@ -55,7 +55,7 @@ export const header = {
       </div>
     </div>
   </nav>
-  <div id"modal">
+  <div id="modal">
   </div>
     `,
     script: () => {
