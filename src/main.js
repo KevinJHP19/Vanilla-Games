@@ -1,8 +1,11 @@
+
 import { header } from './componentes/header'
 import { footer } from './componentes/footer'
+import './scss/styles.scss'
+import 'bootstrap'
 import { enrutador } from "./componentes/enrutador"
 
-import './scss/styles.scss'
+
 
 // Importamos la vista por defecto (que será home)
 
