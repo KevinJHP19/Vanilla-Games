@@ -1,5 +1,5 @@
 
-import { ls } from './funciones.js'
+import { ls } from './funciones'
 const menuRol = {
     templateAnonimo:
     `

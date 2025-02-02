@@ -1,5 +1,5 @@
 
-import { ls } from '../componentes/funciones.js'
+import { ls } from './funciones.js'
 import { menuRol, menuUsuario } from './menus.js'
 
 export const header = {
@@ -72,7 +72,7 @@ export const header = {
     script: ()=>{
       console.log('header Cargado')
 
-      const rolUsuario = ls.getusuario().rol
+      const rolUsuario = ls.getUsuario().rol
 
       switch (rolUsuario) {
         case 'registrado':
@@ -106,11 +106,11 @@ export const header = {
         rol: 'registrado'
       })
     
-      ls.setUsuario(usuario)
+      
       console.log('usuario guardado')
 
       // leemos el usuario del localStorage
-      const usuariologueado = ls.getusuario()
+      const usuariologueado = ls.getUsuario()
       console.log('usuario del localstorage: ', usuariologueado)
     }
   }

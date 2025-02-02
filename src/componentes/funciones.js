@@ -1,5 +1,5 @@
 export const ls = {
-    getusuario: () => {
+    getUsuario: () => {
         
 
         //definimos usuario anonimo por si no hay datos en LocalStorage
