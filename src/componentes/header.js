@@ -89,7 +89,27 @@ export const header = {
         //menu rol
         document.querySelector('#menuRol').innerHTML = menuRol.templateAnonimo
       }
-      //simulamos el inicio de sesion de un usuario
+      try {
+        document.querySelector('#emailUserMenu').innerHTML = ls.getUsuario().email
+        document.querySelector('#rolUserMenu').innerHTML = ls.getUsuario().rol
+
+        const imagen = ls.getUsuario().avatar === '' ? 'images/avatar.svg' : ls.getUsuario().avatar
+        document.querySelector('#avatarMenu').setAttribute('src', imagen)
+      } catch (error) {
+        console.error('El usuario no esta registrado y no tiene menú de usuario');
+       }
+       //cerrar sesion
+       //capturamos clic sobre el item de cerrar sesion
+       document.querySelector('header').addEventListener('click', (event) => {
+        if(event.target.classList.contains('cerrarSesion')){
+          event.preventDefault()
+
+          ls.setUsuario('')
+
+          window.location = '#/home'
+          header.script()
+        }
+       })
 
       
     

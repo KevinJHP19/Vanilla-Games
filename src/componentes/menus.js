@@ -84,7 +84,7 @@ const menuUsuario = {
     </li>
 Mi perfil</a></li>
         <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+        <li><a class="dropdown-item cerrarSesion" href="#">Cerrar sesión</a></li>
       </ul>
     </li>
   </ul>
