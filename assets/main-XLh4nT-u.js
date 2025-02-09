@@ -35,83 +35,313 @@
     fetch(link.href, fetchOpts);
   }
 })();
-const scriptRel = "modulepreload";
-const assetsURL = function(dep, importerUrl) {
-  return new URL(dep, importerUrl).href;
+const ls = {
+  // Captuar datos de localStorage
+  getUsuario: () => {
+    let usuario = {
+      email: "anónimo",
+      rol: "no logueado",
+      avatar: ""
+    };
+    const usuarioJSON = localStorage.getItem("usuarioVanilla");
+    if (usuarioJSON) {
+      usuario = JSON.parse(usuarioJSON);
+    }
+    return usuario;
+  },
+  setUsuario: (usuario) => {
+    const usuarioJSON = JSON.stringify(usuario);
+    localStorage.setItem("usuarioVanilla", usuarioJSON);
+  }
 };
-const seen = {};
-const __vitePreload = function preload(baseModule, deps, importerUrl) {
-  let promise = Promise.resolve();
-  if (deps && deps.length > 0) {
-    const links = document.getElementsByTagName("link");
-    const cspNonceMeta = document.querySelector(
-      "meta[property=csp-nonce]"
-    );
-    const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
-    promise = Promise.allSettled(
-      deps.map((dep) => {
-        dep = assetsURL(dep, importerUrl);
-        if (dep in seen) return;
-        seen[dep] = true;
-        const isCss = dep.endsWith(".css");
-        const cssSelector = isCss ? '[rel="stylesheet"]' : "";
-        const isBaseRelative = !!importerUrl;
-        if (isBaseRelative) {
-          for (let i = links.length - 1; i >= 0; i--) {
-            const link2 = links[i];
-            if (link2.href === dep && (!isCss || link2.rel === "stylesheet")) {
-              return;
-            }
-          }
-        } else if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
-          return;
-        }
-        const link = document.createElement("link");
-        link.rel = isCss ? "stylesheet" : scriptRel;
-        if (!isCss) {
-          link.as = "script";
-        }
-        link.crossOrigin = "";
-        link.href = dep;
-        if (cspNonce) {
-          link.setAttribute("nonce", cspNonce);
-        }
-        document.head.appendChild(link);
-        if (isCss) {
-          return new Promise((res, rej) => {
-            link.addEventListener("load", res);
-            link.addEventListener(
-              "error",
-              () => rej(new Error(`Unable to preload CSS for ${dep}`))
-            );
-          });
-        }
-      })
-    );
+const menuRol = {
+  templateAnonimo: `
+    <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="ms-2 btn btn-success router-link" href="#/login" >
+        Iniciar sesión
+        <i class="bi bi-box-arrow-in-right"></i>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="ms-2 btn btn-outline-light router-link" href="#/registro">
+        Regístrate
+        <i class="bi bi-box-arrow-in-right"></i>
+      </a>
+    </li>
+  </ul>
+    `,
+  templateRegistrado: `
+    <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active router-link" aria-current="page" href="#/proyectos">PROYECTOS</a>
+    </li>
+    
+  </ul>
+    `,
+  templateDesarrollador: `
+    <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active router-link" aria-current="page" href="#/proyectos">PROYECTOS</a>
+    </li>
+
+    
+    `,
+  templateAdmin: `
+    <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active router-link" aria-current="page" href="#/proyectos">PROYECTOS</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active router-link" aria-current="page" href="#/admin">Panel ADMIN</a>
+    </li>
+    
+  </ul>
+    `
+};
+const menuUsuario = {
+  templateRegistrado: `
+    <ul class="navbar-nav ms-auto me-2 mb-2 mb-lg-0">
+    <li class="nav-item dropdown">
+      <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img src="images/avatar.svg" alt="" width="25" />
+      </a>
+      <ul class="dropdown-menu me-0" style="left: -100px; width: 100px">
+        <li class="text-light text-end p-2 small">
+          ${ls.getUsuario().email}
+        </li>
+        <li class="text-light text-end pe-2 small fst-italic">
+          ${ls.getUsuario().rol}
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        
+      <a 
+        class="dropdown-item" 
+        href="#"
+        data-bs-toggle="modal"
+        data-bs-target="#modalEditarPerfil"
+        >
+        Mi perfil
+      </a>
+    </li>
+Mi perfil</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+      </ul>
+    </li>
+  </ul>
+    `,
+  templateDesarrollador: `
+    
+    `,
+  templateAdmin: `
+    
+    `
+};
+const editarPerfil = {
+  template: `
+    <!-- Ventana modaledición perfil -->
+    <div
+      class="modal fade"
+      id="modalEditarPerfil"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <!-- Formulario de edición de perfil -->
+      <form novalidate action="">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Edición de perfil
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="form border shadow-sm p-3">
+                <div class="m-1" style="max-width: 400px">
+                  <div class="imgPerfil border shadow-sm p-3 mb-3">
+                    <div
+                      class="imagen mx-auto mb-1 rounded-circle"
+                      style="
+                        background-image: url(.images/avatar.svg);
+                        width: 200px;
+                        height: 200px;
+                        background-size: cover;
+                        background-position: center;
+                      "
+                    ></div>
+  
+                    <!-- Imagen de perfil -->
+                    <label for="imagen" class="form-label mt-3">URL imagen:</label>
+                    <input
+                      id="imagen"
+                      type="url"
+                      class="form-control"
+                      value="http://imagenavatar.png"
+                    />
+                    <div class="invalid-feedback">La url no es correcta</div>
+                  </div>
+  
+                  <div class="">
+                    <!-- Nombre -->
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input required id="nombre" type="text" class="form-control" />
+                    <div class="invalid-feedback">El nombre es requerido</div>
+                    <!-- Apellidos -->
+                    <label for="apellidos" class="form-label">Apellidos:</label>
+                    <input id="apellidos" type="text" class="form-control" />
+  
+                    <!-- Email -->
+                    <label for="email" class="form-label">Email:</label>
+                    <input required id="email" type="email" class="form-control" />
+                    <div class="invalid-feedback">El formato no es correcto</div>
+  
+                    <!-- Contraseña -->
+                    <label for="pass" class="form-label mt-3">Contraseña:</label>
+                    <input
+                      required
+                      minlength="6"
+                      id="pass"
+                      type="password"
+                      class="form-control"
+                    />
+                    <div class="invalid-feedback">
+                      La contraseña debe ser de 6 caracteres como mínimo
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cancelar
+              </button>
+              <button type="button" class="btn btn-primary">Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    `,
+  script: () => {
+    console.log("script de modal editar perfil cargado");
   }
-  function handlePreloadError(err) {
-    const e = new Event("vite:preloadError", {
-      cancelable: true
-    });
-    e.payload = err;
-    window.dispatchEvent(e);
-    if (!e.defaultPrevented) {
-      throw err;
-    }
-  }
-  return promise.then((res) => {
-    for (const item of res || []) {
-      if (item.status !== "rejected") continue;
-      handlePreloadError(item.reason);
-    }
-    return baseModule().catch(handlePreloadError);
-  });
 };
 const header = {
-  template: `header`
+  template: (
+    // html
+    `
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#/home"
+        ><img
+          src="images/logo.svg"
+          alt=""
+          width="30"
+          height="24"
+          class="d-inline-block align-text-top router-link"
+        />
+        Vanilla Games</a
+      >
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+
+      <!-- Menu comun para todos los usuarios -->
+  <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+      <a class="nav-link active router-link" aria-current="page" href="#/home">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link router-link" aria-current="page" href="#">TOP5 Proyectos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link router-link" aria-current="page" href="#">A cerca de</a>
+    </li>
+  </ul>
+
+  <!-- Aqui va el menu rol -->
+  <div id="menuRol"></div>
+
+  <!--Aqui va el menu usuario -->
+  <div id="menuUsuario"></div>
+  
+  
+      </div>
+    </div>
+  </nav>
+  <div id="modal">
+  </div>
+    `
+  ),
+  script: () => {
+    console.log("header Cargado");
+    document.querySelector("#modal").innerHTML = editarPerfil.template;
+    ls.setUsuario({ email: "chafardera@gmial.com", rol: "registrado" });
+    const rolUsuario = ls.getUsuario().rol;
+    switch (rolUsuario) {
+      case "registrado":
+        document.querySelector("#menuRol").innerHTML = menuRol.templateRegistrado;
+        document.querySelector("#menuUsuario").innerHTML = menuUsuario.templateRegistrado;
+        break;
+      case "desarrollador":
+        document.querySelector("#menuRol").innerHTML = menuRol.templateDesarrollador;
+        document.querySelector("#menuUsuario").innerHTML = menuUsuario.templateDesarrollador;
+        break;
+      case "admin":
+        document.querySelector("#menuRol").innerHTML = menuRol.templateAdmin;
+        document.querySelector("#menuUsuario").innerHTML = menuUsuario.templateAdmin;
+        break;
+      default:
+        document.querySelector("#menuRol").innerHTML = menuRol.templateAnonimo;
+    }
+  }
 };
 const footer = {
-  template: `footer`
+  template: (
+    // html
+    `
+  <nav class="navbar bg-secondary fixed-bottom small">
+    <div class="container">
+      <a class="navbar-brand" href="http://www.fpllefia.com">
+        <img
+          src="images/logo.svg"
+          alt="fpllefia"
+          width="30"
+          height="24"
+          class="d-inline-block align-text-top"
+        />
+        FPLlefià
+      </a>
+      <span class="navbar-text">@Texto de header</span>
+      <a href="#" class="nav-link">Vínculo header</a>
+    </div>
+  </nav>
+    `
+  )
 };
 var top = "top";
 var bottom = "bottom";
@@ -5161,11 +5391,125 @@ class Toast extends BaseComponent {
 }
 enableDismissTrigger(Toast);
 defineJQueryPlugin(Toast);
-async function cargarVista() {
-  const componente = await __vitePreload(() => import("./homeVista-C8hxYrRY.js"), true ? [] : void 0, import.meta.url);
-  const vista = componente.default;
-  document.querySelector("main").innerHTML = vista.template;
-}
-cargarVista();
+const scriptRel = "modulepreload";
+const assetsURL = function(dep, importerUrl) {
+  return new URL(dep, importerUrl).href;
+};
+const seen = {};
+const __vitePreload = function preload(baseModule, deps, importerUrl) {
+  let promise = Promise.resolve();
+  if (deps && deps.length > 0) {
+    const links = document.getElementsByTagName("link");
+    const cspNonceMeta = document.querySelector(
+      "meta[property=csp-nonce]"
+    );
+    const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
+    promise = Promise.allSettled(
+      deps.map((dep) => {
+        dep = assetsURL(dep, importerUrl);
+        if (dep in seen) return;
+        seen[dep] = true;
+        const isCss = dep.endsWith(".css");
+        const cssSelector = isCss ? '[rel="stylesheet"]' : "";
+        const isBaseRelative = !!importerUrl;
+        if (isBaseRelative) {
+          for (let i = links.length - 1; i >= 0; i--) {
+            const link2 = links[i];
+            if (link2.href === dep && (!isCss || link2.rel === "stylesheet")) {
+              return;
+            }
+          }
+        } else if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+          return;
+        }
+        const link = document.createElement("link");
+        link.rel = isCss ? "stylesheet" : scriptRel;
+        if (!isCss) {
+          link.as = "script";
+        }
+        link.crossOrigin = "";
+        link.href = dep;
+        if (cspNonce) {
+          link.setAttribute("nonce", cspNonce);
+        }
+        document.head.appendChild(link);
+        if (isCss) {
+          return new Promise((res, rej) => {
+            link.addEventListener("load", res);
+            link.addEventListener(
+              "error",
+              () => rej(new Error(`Unable to preload CSS for ${dep}`))
+            );
+          });
+        }
+      })
+    );
+  }
+  function handlePreloadError(err) {
+    const e = new Event("vite:preloadError", {
+      cancelable: true
+    });
+    e.payload = err;
+    window.dispatchEvent(e);
+    if (!e.defaultPrevented) {
+      throw err;
+    }
+  }
+  return promise.then((res) => {
+    for (const item of res || []) {
+      if (item.status !== "rejected") continue;
+      handlePreloadError(item.reason);
+    }
+    return baseModule().catch(handlePreloadError);
+  });
+};
+const enrutador = {
+  rutas: {
+    home: __vitePreload(() => import("./homeVista-CHkRonsB.js"), true ? [] : void 0, import.meta.url),
+    // Usuarios
+    admin: __vitePreload(() => import("./adminVista-Bix9wXLI.js"), true ? [] : void 0, import.meta.url),
+    registro: __vitePreload(() => import("./registroVista-DIYQxTvQ.js"), true ? [] : void 0, import.meta.url),
+    login: __vitePreload(() => import("./loginVista-UGFFjie6.js"), true ? [] : void 0, import.meta.url),
+    // Proyectos
+    proyectos: __vitePreload(() => import("./proyectosVista-gEkIY4qC.js"), true ? [] : void 0, import.meta.url),
+    proyectoNuevo: __vitePreload(() => import("./proyectoNuevoVista-D_S11S6W.js"), true ? [] : void 0, import.meta.url),
+    proyectoEditar: __vitePreload(() => import("./proyectoEditarVista-VXrMU3H_.js"), true ? [] : void 0, import.meta.url),
+    proyectoDetalle: __vitePreload(() => import("./proyectoDetalleVista-BPM1xP8y.js"), true ? [] : void 0, import.meta.url),
+    404: __vitePreload(() => import("./404-CGfZ8fs7.js"), true ? [] : void 0, import.meta.url)
+  },
+  // Método que obtiene la ruta del navegador
+  router: async () => {
+    const pathCompleto = window.location.hash;
+    const path = pathCompleto.split("/")[1];
+    const parametro = pathCompleto.split("/")[2];
+    const componenteVista = await enrutador.rutas[path];
+    if (componenteVista) {
+      const vista = await componenteVista.default;
+      document.querySelector("main").innerHTML = vista.template;
+      vista.script(parametro);
+    } else {
+      window.location = "#/404";
+    }
+  },
+  observadorRutas: () => {
+    document.body.addEventListener("click", (event) => {
+      const link = event.target;
+      if (link.classList.contains("router-link")) {
+        console.log("router-link");
+        event.preventDefault();
+        const href = link.getAttribute("href");
+        window.history.pushState({ path: href }, "", href);
+        enrutador.router();
+      }
+    });
+    window.addEventListener("popstate", (e) => {
+      console.log("evento popstate - Te estás moviendo por el historial");
+      enrutador.router();
+    });
+  }
+};
 document.querySelector("header").innerHTML = header.template;
+header.script();
 document.querySelector("footer").innerHTML = footer.template;
+enrutador.observadorRutas();
+window.location = "#/home";
