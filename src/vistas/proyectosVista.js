@@ -1,4 +1,4 @@
-import { proyectos } from '../bd/datosPrueba'
+import  proyectos  from '../vistas/proyectosVista'
 import { ls } from '../componentes/funciones'
 
 export default {
@@ -400,7 +400,11 @@ export default {
     // ####################################################################
 
     // Capturamos los datos del usuario logueado
-    
+    const usuario = ls.getUsuario()
+    // Ocultamos el botón de subir proyecto si el rol es registrado
+    if (usuario.rol === 'registrado') {
+      document.querySelector('#botonSubirProyecto').classList.add('disabled')
+    }
   }
 }
 
