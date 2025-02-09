@@ -1,4 +1,4 @@
-import  proyectos  from '../vistas/proyectosVista'
+import { proyectos } from '../bd/datosPrueba'
 import { ls } from '../componentes/funciones'
 
 export default {
@@ -111,8 +111,10 @@ export default {
   script: () => {
     // **** AQUI DEBEMOS CAPTURAR LOS PROYECTOS DE LA BASE DE DATOS ****
 
+    let misProyectos = false;
+    const usuario = ls.getUsuario();
     // Capturamos proyectos y guardamos en variable para poder ser filtrada
-    const datos = proyectos
+    const datos = proyectos;
 
     // ####################################################################
     // *** FUNCIÓN PARA PINTAR TABLA A PARTIR DE ARRAY datos ***
@@ -120,11 +122,11 @@ export default {
 
     const pintaTabla = (proyectosFiltrados) => {
       // Si tenemos seleccionada la opción 'mis proyectos' filtramos los proyectos por user_id
-      if (misProyectos) {
+      if(misProyectos) {
         proyectosFiltrados = datos.filter((proyecto) => proyecto.user_id === usuario.user_id)
       }
 
-      let tbodyProyectos = ''
+      let tbodyProyectos = '';
       // Iteramos para cada proyecto del array 'proyectos'
       proyectosFiltrados.forEach(proyecto => {
         // Generamos botones dependiendo de si el proyecto ha sido creado por el usuario logueado
@@ -336,8 +338,8 @@ export default {
     // Vista 'Todos los proyectos' / 'Mis proyectos'
     // ####################################################################
 
-    // Definimos que por defecto se muestran 'mis proyectos'
-    let misProyectos = false
+    
+    
 
     // *** Detectamos si se cambia de proyectos a mis proyectos al hacer click en las pestañas ***
     document.querySelector('.nav-tabs').addEventListener('click', (event) => {
@@ -399,8 +401,7 @@ export default {
     // Mostrar/ocultar botón 'subir proyecto'
     // ####################################################################
 
-    // Capturamos los datos del usuario logueado
-    const usuario = ls.getUsuario()
+    
     // Ocultamos el botón de subir proyecto si el rol es registrado
     if (usuario.rol === 'registrado') {
       document.querySelector('#botonSubirProyecto').classList.add('disabled')
