@@ -1,9 +1,10 @@
-import { proyectos } from '../bd/datosPrueba'
-import { ls } from '../componentes/funciones'
+import { ls } from "../componentes/funciones";
+import { Proyecto } from "../bd/proyecto";
+import { User } from "../bd/user";
 
 export default {
-  template: // html
-  `
+  // html
+  template: `
   <div class="container">
   <h1 class="mt-5">Proyectos</h1>
   <div class="row mt-5">
@@ -95,7 +96,6 @@ export default {
         </thead>
         <tbody id="tbodyProyectos">
           <!-- Aqui van los datos generados por la lógica -->
-          <p>No tienes proyectos</p>
         </tbody>
       </table>
     </div>
@@ -103,18 +103,36 @@ export default {
     <!-- Panel de tarjetas -->
     <div id="tabTarjetas" class="d-xl-none row">
       <!-- Aqui van los datos generados por la lógica -->
-      <p>No tienes proyectos</p>
     </div>
   </div>
 </div>
   `,
-  script: () => {
+  script: async () => {
     // **** AQUI DEBEMOS CAPTURAR LOS PROYECTOS DE LA BASE DE DATOS ****
 
-    let misProyectos = false;
-    const usuario = ls.getUsuario();
     // Capturamos proyectos y guardamos en variable para poder ser filtrada
-    const datos = proyectos;
+    const datosBd = await Proyecto.getAll();
+    console.log("datos", datosBd);
+    const user = await User.getUser();
+    const userId = user.id;
+    console.log("userId", userId);
+    const datos = datosBd.map((dato) => {
+      const fecha = dato.created_at;
+      const nuevaFecha = fecha.split("T")[0];
+      const fechaFormateada = `${nuevaFecha.split("-")[2]}/${
+        nuevaFecha.split("-")[1]
+      }/${nuevaFecha.split("-")[0]}`;
+      const datoFormateado = {
+        ...dato,
+        created_at: fechaFormateada,
+      };
+      return datoFormateado;
+    });
+
+    let misProyectos = false;
+    // Capturamos los datos del usuario logueado
+    const usuario = ls.getUsuario();
+    console.log(usuario);
 
     // ####################################################################
     // *** FUNCIÓN PARA PINTAR TABLA A PARTIR DE ARRAY datos ***
@@ -122,19 +140,21 @@ export default {
 
     const pintaTabla = (proyectosFiltrados) => {
       // Si tenemos seleccionada la opción 'mis proyectos' filtramos los proyectos por user_id
-      if(misProyectos) {
-        proyectosFiltrados = datos.filter((proyecto) => proyecto.user_id === usuario.user_id)
+      if (misProyectos) {
+        proyectosFiltrados = proyectosFiltrados.filter(
+          (proyecto) => proyecto.user_id === userId
+        );
       }
 
-      let tbodyProyectos = '';
+      let tbodyProyectos = "";
       // Iteramos para cada proyecto del array 'proyectos'
-      proyectosFiltrados.forEach(proyecto => {
+      proyectosFiltrados.forEach((proyecto) => {
         // Generamos botones dependiendo de si el proyecto ha sido creado por el usuario logueado
-        let botones = ''
-        if (usuario.user_id === proyecto.user_id) {
-          botones =
-          `
+        let botones = "";
+        if (userId === proyecto.user_id) {
+          botones = `
           <td><a
+            href="#/proyectoEditar/${proyecto.id}"
             data-id = ${proyecto.id}
             class="botonAdmin botonEditar d-none d-sm-inline btn btn-sm btn-outline-primary bi bi-pencil"
           ></a></td>
@@ -142,26 +162,31 @@ export default {
             data-id = ${proyecto.id}
             class="botonAdmin botonBorrar d-none d-sm-inline btn btn-sm btn-outline-danger bi bi-trash3"
           ></a></td>
-          `
+          `;
         }
         // sumamos un tr con los datos del proyecto de la iteración
-        tbodyProyectos += // html
-        `
-        <tr data-id="${proyecto.id}" class="verDetalle">
+        tbodyProyectos +=
+          // html
+          `
+        <tr data-id=${proyecto.id} class="verDetalle">
           <td>
             <div class="containerImagen">
               <img 
                 class="verDetalle"
-                data-id="${proyecto.id}"
+                data-id=${proyecto.id}
                 width="200px" 
-                src=${proyecto.imagen || 'images/imagenVacia.png'} 
+                src=${proyecto.imagen || "images/imagenVacia.png"} 
                 alt="imagen proyecto" />
             </div>
           </td>
           <td>${proyecto.nombre}</td>
           <td>${proyecto.descripcion}</td>
-          <td><a href="${proyecto.enlace}" target="_blank"><i class="bi bi-link fs-4"></i></a></td>
-          <td><a href="${proyecto.repositorio}" target="_blank"><i class="bi bi-folder-symlink fs-4"></i></a></td>
+          <td><a href="${
+            proyecto.enlace
+          }" target="_blank"><i class="bi bi-link fs-4"></i></a></td>
+          <td><a href="${
+            proyecto.repositorio
+          }" target="_blank"><i class="bi bi-folder-symlink fs-4"></i></a></td>
           <td>${proyecto.nombre_usuario} ${proyecto.apellidos_usuario}</td>
           <td>${proyecto.created_at}</td>
           <td>${proyecto.estado}</td>
@@ -170,11 +195,11 @@ export default {
             ${botones}
           </td>
         </tr>   
-        `
-      })
+        `;
+      });
       // inyectamos el resultado en el tbody
-      document.querySelector('#tbodyProyectos').innerHTML = tbodyProyectos
-    }
+      document.querySelector("#tbodyProyectos").innerHTML = tbodyProyectos;
+    };
 
     // ####################################################################
     // Función para pintar tarjetas
@@ -183,18 +208,20 @@ export default {
     const pintaTarjetas = (proyectosFiltrados) => {
       // Si tenemos seleccionada la opción 'mis proyectos' filtramos los proyectos por user_id
       if (misProyectos) {
-        proyectosFiltrados = datos.filter((proyecto) => proyecto.user_id === usuario.user_id)
-        console.log(proyectos)
+        proyectosFiltrados = proyectosFiltrados.filter(
+          (proyecto) => proyecto.user_id === userId
+        );
+        console.log("proyectosUserId", proyectosFiltrados);
       }
-      let tarjetasProyectos = ''
+      let tarjetasProyectos = "";
       // Iteramos para cada proyecto del array 'proyectosFiltrados'
-      proyectosFiltrados.forEach(proyecto => {
+      proyectosFiltrados.forEach((proyecto) => {
         // Generamos botones dependiendo de si el proyecto ha sido creado por el usuario logueado
-        let botones = ''
+        let botones = "";
         if (usuario.user_id === proyecto.user_id) {
-          botones =
-          `
+          botones = `
           <a
+            href="#/proyectoEditar/${proyecto.id}"
             data-id = ${proyecto.id}
             class="botonAdmin botonEditar d-none d-sm-inline btn btn-sm btn-outline-primary bi bi-pencil"
           ></a>
@@ -202,11 +229,12 @@ export default {
             data-id = ${proyecto.id}
             class="botonAdmin botonBorrar d-none d-sm-inline btn btn-sm btn-outline-danger bi bi-trash3"
           ></a>
-          `
+          `;
         }
         // sumamos un tr con los datos del proyecto
-        tarjetasProyectos += // html
-        `
+        tarjetasProyectos +=
+          // html
+          `
         <!-- tarjeta  -->
         <div class="col-12 col-lg-6">
           <div class="card mb-3">
@@ -215,7 +243,9 @@ export default {
                 class="col-4 verDetalle"
                 data-id="${proyecto.id}"
                 style="
-                  background-image: url(${proyecto.imagen || 'images/imagenVacia.png'});
+                  background-image: url(${
+                    proyecto.imagen || "images/imagenVacia.png"
+                  });
                   background-position: center;
                   background-size: cover;
                 "
@@ -226,11 +256,21 @@ export default {
                   <p class="card-text">
                     ${proyecto.descripcion}
                   </p>
-                  <p class="small m-0 text-end text-italic">Autor: ${proyecto.nombre_usuario} ${proyecto.apellidos_usuario}</p>
-                  <p class="small text-end text-italic">Fecha: ${proyecto.created_at}</p>
-                  <a class="btn btn-sm btn-outline-primary" href="${proyecto.enlace}" target="_blank"><i class="bi bi-link"></i></a>
-                  <a class="btn btn-sm btn-outline-primary" href="${proyecto.repositorio}" target="_blank"><i class="bi bi-folder-symlink"></i></a>
-                  <button class="btn btn-sm btn-success">${proyecto.estado}</button>
+                  <p class="small m-0 text-end text-italic">Autor: ${
+                    proyecto.nombre_usuario
+                  } ${proyecto.apellidos_usuario}</p>
+                  <p class="small text-end text-italic">Fecha: ${
+                    proyecto.created_at
+                  }</p>
+                  <a class="btn btn-sm btn-outline-primary" href="${
+                    proyecto.enlace
+                  }" target="_blank"><i class="bi bi-link"></i></a>
+                  <a class="btn btn-sm btn-outline-primary" href="${
+                    proyecto.repositorio
+                  }" target="_blank"><i class="bi bi-folder-symlink"></i></a>
+                  <button class="btn btn-sm btn-success">${
+                    proyecto.estado
+                  }</button>
                   <!-- Botones editar y borrar -->
                   ${botones}
                 </div>
@@ -238,174 +278,176 @@ export default {
             </div>
           </div>
         </div>  
-        `
-      })
+        `;
+      });
       // inyectamos el resultado en tbody
-      document.querySelector('#tabTarjetas').innerHTML = tarjetasProyectos
-    }
+      document.querySelector("#tabTarjetas").innerHTML = tarjetasProyectos;
+    };
 
     // *** Pintamos los datos en tabla y tarjetas ***
-    pintaTabla(datos)
-    pintaTarjetas(datos)
+    pintaTabla(datos);
+    pintaTarjetas(datos);
 
     // ####################################################################
     // *** SELECCIÓN DE VISTA EN FORMATO TABLA O TARJETAS ***
     // ####################################################################
 
     // Selección vista tabla
-    document.querySelector('.vistaTabla').addEventListener('click', (boton) => {
+    document.querySelector(".vistaTabla").addEventListener("click", (boton) => {
       // Lineas originales del html para los tabs:
       // <div class="col-12 d-none d-xl-block" style="overflow-x: auto">
       // <div class="d-xl-none row">
 
       // Pinta el boton de verde
-      boton.target.classList.add('btn-success')
+      boton.target.classList.add("btn-success");
 
       // Pinta el otro botón de gris y elimina el verde
-      const botonTarjeta = document.querySelector('.vistaTarjetas')
-      botonTarjeta.classList.remove('btn-success')
-      botonTarjeta.classList.add('btn-secondary')
+      const botonTarjeta = document.querySelector(".vistaTarjetas");
+      botonTarjeta.classList.remove("btn-success");
+      botonTarjeta.classList.add("btn-secondary");
 
       // Muestra y oculta los tabs
-      document.querySelector('#tabTabla').setAttribute('class', 'col-12 d-block')
-      document.querySelector('#tabTarjetas').setAttribute('class', 'd-none')
-    })
+      document
+        .querySelector("#tabTabla")
+        .setAttribute("class", "col-12 d-block");
+      document.querySelector("#tabTarjetas").setAttribute("class", "d-none");
+    });
 
     // Selección vista tarjetas
-    document.querySelector('.vistaTarjetas').addEventListener('click', (boton) => {
-      console.log('vistaTarjetas')
+    document
+      .querySelector(".vistaTarjetas")
+      .addEventListener("click", (boton) => {
+        console.log("vistaTarjetas");
 
-      // Pinta el boton de verde
-      boton.target.classList.add('btn-success')
+        // Pinta el boton de verde
+        boton.target.classList.add("btn-success");
 
-      // Pinta el otro botón de gris y elimina el verde
-      const botonTabla = document.querySelector('.vistaTabla')
-      botonTabla.classList.remove('btn-success')
-      botonTabla.classList.add('btn-secondary')
+        // Pinta el otro botón de gris y elimina el verde
+        const botonTabla = document.querySelector(".vistaTabla");
+        botonTabla.classList.remove("btn-success");
+        botonTabla.classList.add("btn-secondary");
 
-      // Muestra y oculta los tabs
-      document.querySelector('#tabTabla').setAttribute('class', 'd-none')
-      document.querySelector('#tabTarjetas').setAttribute('class', 'row')
-    })
+        // Muestra y oculta los tabs
+        document.querySelector("#tabTabla").setAttribute("class", "d-none");
+        document.querySelector("#tabTarjetas").setAttribute("class", "row");
+      });
 
     // ####################################################################
     // *** FILTRO PARA BUSCADOR ***
     // ####################################################################
 
     // Capturamos el input de búsqueda
-    const inputBusqueda = document.getElementById('inputBusqueda')
+    const inputBusqueda = document.getElementById("inputBusqueda");
 
     // Agregamos un evento de escucha para el evento de entrada en el input de búsqueda
-    inputBusqueda.addEventListener('input', () => {
+    inputBusqueda.addEventListener("input", () => {
       // Capturamos el texto de búsqueda del input, conviértelo a minúsculas y elimina espacios en blanco al principio y al final
-      const textoBusqueda = inputBusqueda.value.toLowerCase().trim()
+      const textoBusqueda = inputBusqueda.value.toLowerCase().trim();
 
       // Filtramos los proyectos que coinciden con el texto de búsqueda en cualquier campo
-      const proyectosFiltrados = datos.filter(proyecto => {
+      const proyectosFiltrados = datos.filter((proyecto) => {
         // Itera sobre las propiedades (campos) de cada proyecto
         for (const key in proyecto) {
           // Obtenemos el valor del campo actual
-          const valorCampo = proyecto[key]
+          const valorCampo = proyecto[key];
           // Verificamos si el valor del campo es una cadena y si contiene el texto de búsqueda
-          if (typeof valorCampo === 'string' && valorCampo.toLowerCase().includes(textoBusqueda)) {
+          if (
+            typeof valorCampo === "string" &&
+            valorCampo.toLowerCase().includes(textoBusqueda)
+          ) {
             // Si hay coincidencia, devuelve true para incluir el proyecto en la lista filtrada
-            return true
+            return true;
           }
         }
         // Si no se encontró coincidencia en ningún campo, devuelve false para excluir el proyecto
-        return false
-      })
+        return false;
+      });
       // Volvemos a pintar los datos con los proyectos filtrados por el buscador
-      pintaTabla(proyectosFiltrados)
-      pintaTarjetas(proyectosFiltrados)
-    })
+      pintaTabla(proyectosFiltrados);
+      pintaTarjetas(proyectosFiltrados);
+    });
 
     // ####################################################################
     // Borrar datos del input del buscador al hacer click en 'x'
     // ####################################################################
 
-    document.querySelector('#borrarBuscador').addEventListener('click', () => {
+    document.querySelector("#borrarBuscador").addEventListener("click", () => {
       // Borramos contenido del buscador
-      inputBusqueda.value = ''
+      inputBusqueda.value = "";
       // Actualizamos array con todos los proyectos
       // const proyectosFiltrados = datos
       // Actualizamos los datos en el panel central
-      pintaTabla(datos)
-      pintaTarjetas(datos)
-    })
+      pintaTabla(datos);
+      pintaTarjetas(datos);
+    });
 
     // ####################################################################
     // Vista 'Todos los proyectos' / 'Mis proyectos'
     // ####################################################################
 
-    
-    
-
     // *** Detectamos si se cambia de proyectos a mis proyectos al hacer click en las pestañas ***
-    document.querySelector('.nav-tabs').addEventListener('click', (event) => {
+    document.querySelector(".nav-tabs").addEventListener("click", (event) => {
       // Si click en 'Mis proyectos' cambiamos pestaña activa
-      if (event.target.classList.contains('fichaMisProyectos')) {
-        document.querySelector('.fichaMisProyectos').classList.add('active')
-        document.querySelector('.fichaProyectos').classList.remove('active')
-        misProyectos = true
+      if (event.target.classList.contains("fichaMisProyectos")) {
+        document.querySelector(".fichaMisProyectos").classList.add("active");
+        document.querySelector(".fichaProyectos").classList.remove("active");
+        misProyectos = true;
       } else {
         // Si click en 'Todos los proyectos' cambiamos pestaña activa
-        document.querySelector('.fichaProyectos').classList.add('active')
-        document.querySelector('.fichaMisProyectos').classList.remove('active')
-        misProyectos = false
+        document.querySelector(".fichaProyectos").classList.add("active");
+        document.querySelector(".fichaMisProyectos").classList.remove("active");
+        misProyectos = false;
       }
       // Actualizamos los datos en el panel central
-      pintaTabla(datos)
-      pintaTarjetas(datos)
-    })
+      pintaTabla(datos);
+      pintaTarjetas(datos);
+    });
 
     // ####################################################################
     // BOTONES DE EDICIÓN, BORRADO y VISUALIZACIÓN DE DETALLE DE PROYECTOS
     // ####################################################################
 
     // Detectamos clic sobre main (Usamos delegación de eventos porque la tabla y tarjetas se actualizan constantemente en el DOM)
-    document.querySelector('main').addEventListener('click', (event) => {
-      let id = ''
+    document.querySelector("main").addEventListener("click", (event) => {
+      let id = "";
       // Si hemos pulsado sobre uno de los botones DE EDICIÓN O BORRADO
-      if (event.target.classList.contains('botonAdmin')) {
-        const boton = event.target
+      if (event.target.classList.contains("botonAdmin")) {
+        const boton = event.target;
         // Capturamos el id de su dataset
-        const id = boton.dataset.id
-        if (boton.classList.contains('botonEditar')) {
+        const id = boton.dataset.id;
+        if (boton.classList.contains("botonEditar")) {
           // Si se trata de editar
-          console.log('Editar proyecto ' + id)
+          console.log("Editar proyecto " + id);
 
           // Cargamos la vista para editar proyecto pasandole como parámetro el id
-          window.location = `#/proyectoEditar/${id}`
-        } else if (boton.classList.contains('botonBorrar')) {
+          window.location = `#/proyectoEditar/${id}`;
+        } else if (boton.classList.contains("botonBorrar")) {
           // Si se trata de borrar
-          alert('Borrar proyecto ' + id)
+          alert("Borrar proyecto " + id);
 
           // *** AQUÍ VA LA FUNCIÓN QUE BORRA DE LA BASE DE DATOS EL PROYECTO CORRESPONDIENTE AL ID ***
         }
       }
+
       // Visualizar detalle del proyecto si click sobre tr de vista tabla
-      if (event.target.tagName === 'TD') {
-        console.log('clic en td')
-        id = event.target.parentNode.dataset.id
-        window.location = `#/proyectoDetalle/${id}`
+      if (event.target.tagName === "TD") {
+        console.log("clic en td");
+        id = event.target.parentNode.dataset.id;
+        window.location = `#/detalleProyecto/${id}`;
       }
       // Si hacemos clic sobre la imagen de tabla o de vista tarjetas
-      if (event.target.classList.contains('verDetalle')) {
-        id = event.target.dataset.id
-        window.location = `#/proyectoDetalle/${id}`
+      if (event.target.classList.contains("verDetalle")) {
+        id = event.target.dataset.id;
+        window.location = `#/detalleProyecto/${id}`;
       }
-    })
+    });
 
-    // ####################################################################
-    // Mostrar/ocultar botón 'subir proyecto'
+    // ####################################################################    // Mostrar/ocultar botón 'subir proyecto'
     // ####################################################################
 
-    
     // Ocultamos el botón de subir proyecto si el rol es registrado
-    if (usuario.rol === 'registrado') {
-      document.querySelector('#botonSubirProyecto').classList.add('disabled')
+    if (usuario.rol === "registrado") {
+      document.querySelector("#botonSubirProyecto").classList.add("disabled");
     }
-  }
-}
-
+  },
+};

@@ -1,7 +1,9 @@
-import { ls } from './funciones'
+import { ls } from "./funciones";
+import { User } from "../bd/user";
+
 export const editarPerfil = {
-  template: // html
-  `
+  // html
+  template: `
   <!-- Ventana modaledición perfil -->
   <div
     class="modal fade"
@@ -54,21 +56,26 @@ export const editarPerfil = {
                 <div class="">
                   <!-- Nombre -->
                   <label for="nombrePerfil" class="form-label">Nombre:</label>
-                  <input required id="nombrePerfil" type="text" class="form-control" value="${ls.getUsuario().nombre}" />
+                  <input required id="nombrePerfil" type="text" class="form-control" value="${
+                    ls.getUsuario().nombre
+                  }" />
                   <div class="invalid-feedback">El nombre es requerido</div>
                   <!-- Apellidos -->
                   <label for="apellidosPerfil" class="form-label">Apellidos:</label>
-                  <input id="apellidosPerfil" type="text" class="form-control" value = "${ls.getUsuario().apellidos}" />
+                  <input id="apellidosPerfil" type="text" class="form-control" value="${
+                    ls.getUsuario().apellidos
+                  }" />
 
                   <!-- Email -->
                   <label for="emailPerfil" class="form-label">Email:</label>
-                  <input required id="emailPerfil" type="email" class="form-control" value = "${ls.getUsuario().email}" />
+                  <input required id="emailPerfil" type="email" class="form-control" value="${
+                    ls.getUsuario().email
+                  }" />
                   <div class="invalid-feedback">El formato no es correcto</div>
 
                   <!-- Contraseña -->
                   <label for="passPerfil" class="form-label mt-3">Nueva contraseña:</label>
                   <input
-                    
                     minlength="6"
                     id="passPerfil"
                     type="password"
@@ -85,7 +92,9 @@ export const editarPerfil = {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               Cancelar
             </button>
-            <button id="enviarPerfilEditado" data-id = ${ls.getUsuario().user_id} type="submit" class="btn btn-primary">Guardar cambios</button>
+            <button id="enviarPerfilEditado" data-id="${
+              ls.getUsuario().user_id
+            }" type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
         </div>
       </div>
@@ -93,38 +102,50 @@ export const editarPerfil = {
   </div>
   `,
   script: () => {
-    console.log('script editar perfil cargado')
+    console.log("script editar perfil cargado");
     // Validación bootstrap
     // Capturamos el formulario en una variable
-    const formulario = document.querySelector('#formularioEditarPerfil')
+    const formulario = document.querySelector("#formularioEditarPerfil");
     // Detectamos su evento submit (enviar)
-    formulario.addEventListener('submit', (event) => {
-    // Comprobamos si el formulario no valida
-    // Detenemos el evento enviar (submit)
-      event.preventDefault()
-      event.stopPropagation()
+    formulario.addEventListener("submit", (event) => {
+      // Comprobamos si el formulario no valida
+      // Detenemos el evento enviar (submit)
+      event.preventDefault();
+      event.stopPropagation();
       if (!formulario.checkValidity()) {
         // formulario no valida
       } else {
         //* ** ENVIAMOS DATOS A LA BASE DE DATOS */
-        enviaDatos()
+        enviaDatos();
       }
       // Y añadimos la clase 'was-validate' para que se muestren los mensajes
-      formulario.classList.add('was-validated')
-    })
+      formulario.classList.add("was-validated");
+    });
 
     // Función para enviar datos a la base de datos
-    function enviaDatos () {
+    function enviaDatos() {
+      const usuario = ls.getUsuario();
       const perfilEditado = {
-        avatar: document.querySelector('#avatar').value,
-        nombre: document.querySelector('#nombrePerfil').value,
-        apellidos: document.querySelector('#apellidosPerfil').value,
-        email: document.querySelector('#emailPerfil').value,
-        contraseña: document.querySelector('#passPerfil').value
+        user_id: usuario.user_id,
+        avatar: document.querySelector("#avatar").value,
+        nombre: document.querySelector("#nombrePerfil").value,
+        apellidos: document.querySelector("#apellidosPerfil").value,
+        email: document.querySelector("#emailPerfil").value,
+        contraseña:
+          document.querySelector("#passPerfil").value || usuario.contraseña,
+      };
 
-      }
-      alert(`Enviando a la base de datos el objeto con id = ${ls.getUsuario().user_id}`)
-      console.log(`Enviando a la base de datos el objeto con user_id = ${ls.getUsuario().user_id}`, perfilEditado)
+      // Actualizamos el usuario en la base de datos
+      User.update(perfilEditado);
+
+      // Actualizamos el localStorage
+      ls.setUsuario(perfilEditado);
+
+      // Cerramos el modal
+      const modal = bootstrap.Modal.getInstance(
+        document.querySelector("#modalEditarPerfil")
+      );
+      modal.hide();
     }
-  }
-}
+  },
+};
