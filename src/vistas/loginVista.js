@@ -1,7 +1,7 @@
 import { ls } from "../componentes/funciones";
 import { User } from "../bd/user";
 import { Perfil } from "../bd/perfil";
-import { header } from "../componentes/Header";
+import { header } from "../componentes/header";
 
 export default {
   template: `
