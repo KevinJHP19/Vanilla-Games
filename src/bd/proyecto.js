@@ -115,4 +115,16 @@ export class Proyecto {
     // Si la actualización fue exitosa, devuelve true
     return true;
   }
+  static async delete(id) {
+    // Elimina el proyecto de la base de datos filtrando por su ID
+    const { error } = await supabase.from("proyectos").delete().eq("id", id);
+
+    if (error) {
+      throw new Error(`Error eliminando proyecto: ${error.message}`);
+    }
+
+    return true;
+  }
+
 }
+

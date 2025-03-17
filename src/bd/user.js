@@ -3,11 +3,48 @@ import { supabase } from "./supabase.js";
 
 // Definición de la clase User
 export class User {
-  // Constructor que asigna propiedades básicas de un usuario
-  constructor(id = null, email = null, password = null) {
+  constructor(
+    id = null,
+    email = null,
+    password = null,
+    avatar = "",
+    nombre = "",
+    apellidos = "",
+    created_at = "",
+    rol = "",
+    estado = ""
+  ) {
     this.id = id;
     this.email = email;
     this.password = password;
+    this.avatar = avatar;
+    this.nombre = nombre;
+    this.apellidos = apellidos;
+    this.created_at = created_at;
+    this.rol = rol;
+    this.estado = estado;
+  }
+
+  // Método para obtener todos los usuarios desde la BD
+  static async getAll() {
+    const { data, error } = await supabase.from("perfiles").select("*");
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data.map(
+      (u) =>
+        new User(
+          u.id,
+          u.email,
+          null,
+          u.avatar || "",
+          u.nombre || "",
+          u.apellidos || "",
+          u.created_at || "",
+          u.rol || "",
+          u.estado || ""
+        )
+    );
   }
 
   // Método estático para crear un nuevo usuario (registro)
@@ -22,7 +59,7 @@ export class User {
 
     // Si el usuario se crea correctamente, devuelve una instancia de User con el ID y el email
     console.log("usuario creado correctamente ", data);
-    return new User(data.user.id, data.user.email, data.user.password);
+    return new User(data.user.id, data.user.email);
   }
 
   // Método estático para iniciar sesión (recibe un objeto con email y password)
@@ -67,8 +104,6 @@ export class User {
   // Método para actualizar datos del usuario (no está claro cómo se utiliza actualmente)
   async update(nuevosDatos) {
     const { data, error } = await supabase.auth.updateUser({
-
-      
       email: this.email,
       password: this.password,
     });
