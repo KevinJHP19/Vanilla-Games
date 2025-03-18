@@ -87,7 +87,7 @@ export default {
                 // Insertamos perfil en la base de datos
                 await Perfil.create(perfil);
 
-                alert("Usuario creado correctamente. Revisa tu email...");
+                alert("Usuario creado correctamente.");
                 window.location = "#/login";
               } catch (error) {
                 alert("Error al crear usuario: " + error);
