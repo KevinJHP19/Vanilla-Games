@@ -82,6 +82,13 @@ export const header = {
         document.querySelector("#menuUsuario").innerHTML =
           menuUsuario.templateAdmin;
         break;
+      case "alumno":
+        // menú rol
+        document.querySelector("#menuRol").innerHTML = menuRol.templateAlumno;
+        // menú usuario
+        document.querySelector("#menuUsuario").innerHTML =
+          menuUsuario.templateAlumno;
+        break;
       default: // Para usuarios anónimos
         // menú rol
         document.querySelector("#menuRol").innerHTML = menuRol.templateAnonimo;

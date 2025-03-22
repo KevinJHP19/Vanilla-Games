@@ -117,12 +117,18 @@ export class Proyecto {
   }
   static async delete(id) {
     // Elimina el proyecto de la base de datos filtrando por su ID
-    const { error } = await supabase.from("proyectos").delete().eq("id", id);
-
+    const { data, error } = await supabase.from("proyectos").delete().eq("id", id);
+  
+    // Manejo de errores
     if (error) {
       throw new Error(`Error eliminando proyecto: ${error.message}`);
     }
-
+  
+    // Verifica si el proyecto fue eliminado
+    if (!data || data.length === 0) {
+      throw new Error(`No se encontró ningún proyecto con ID: ${id}`);
+    }
+  
     return true;
   }
 

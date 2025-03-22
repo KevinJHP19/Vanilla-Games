@@ -1,7 +1,7 @@
 
-import { ls } from "../componentes/funciones";
-import { Proyecto } from "../bd/proyecto";
-import { User } from "../bd/user";
+import { ls } from "../componentes/funciones.js"
+import { Proyecto } from "../bd/proyecto.js"
+import { User } from "../bd/user.js"
 
 export default {
   // html
@@ -113,22 +113,22 @@ export default {
 
     // Capturamos proyectos y guardamos en variable para poder ser filtrada
     const datosBd = await Proyecto.getAll();
-    console.log("datos", datosBd);
-    const user = await User.getUser();
-    const userId = user.id;
-    console.log("userId", userId);
-    const datos = datosBd.map((dato) => {
-      const fecha = dato.created_at;
-      const nuevaFecha = fecha.split("T")[0];
-      const fechaFormateada = `${nuevaFecha.split("-")[2]}/${
-        nuevaFecha.split("-")[1]
-      }/${nuevaFecha.split("-")[0]}`;
-      const datoFormateado = {
-        ...dato,
-        created_at: fechaFormateada,
-      };
-      return datoFormateado;
-    });
+console.log("datos", datosBd);
+const user = await User.getUser();
+const userId = user.id;
+console.log("userId", userId);
+const datos = datosBd.map((dato) => {
+  const fecha = dato.created_at;
+  const nuevaFecha = fecha.split("T")[0];
+  const fechaFormateada = `${nuevaFecha.split("-")[2]}/${
+    nuevaFecha.split("-")[1]
+  }/${nuevaFecha.split("-")[0]}`;
+  const datoFormateado = {
+    ...dato,
+    created_at: fechaFormateada,
+  };
+  return datoFormateado;
+});
 
     let misProyectos = false;
     // Capturamos los datos del usuario logueado
@@ -256,7 +256,7 @@ export default {
                         ${proyecto.descripcion}
                       </p>
                       <p class="small m-0 text-end text-italic">Autor: ${
-                        proyecto.nombre_usuario
+                        proyecto.nombre
                       } ${proyecto.apellidos_usuario}</p>
                       <p class="small text-end text-italic">Fecha: ${
                         proyecto.created_at
@@ -406,60 +406,46 @@ export default {
     // BOTONES DE EDICIÓN, BORRADO y VISUALIZACIÓN DE DETALLE DE PROYECTOS
     // ####################################################################
 
-    // Dentro del event listener de "main"
+    // Detectamos clic sobre main (Usamos delegación de eventos porque la tabla y tarjetas se actualizan constantemente en el DOM)
     document.querySelector("main").addEventListener("click", async (event) => {
-      // Si el clic se origina en un botón de acción, detenemos la propagación inmediata
-      const boton = event.target.closest(".botonAdmin");
-      if (boton) {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
+      let id = "";
+      // Si hemos pulsado sobre uno de los botones DE EDICIÓN O BORRADO
+      if (event.target.classList.contains("botonAdmin")) {
+        const boton = event.target;
+        // Capturamos el id de su dataset
         const id = boton.dataset.id;
-
         if (boton.classList.contains("botonEditar")) {
-          // Acción de editar
+          // Si se trata de editar
           console.log("Editar proyecto " + id);
+
+          // Cargamos la vista para editar proyecto pasandole como parámetro el id
           window.location = `#/proyectoEditar/${id}`;
         } else if (boton.classList.contains("botonBorrar")) {
-          // Acción de borrar
-          if (confirm("¿Estás seguro de que deseas eliminar este proyecto?")) {
+          // Si se trata de borrar
+          const confirmacion = confirm("¿Estás seguro de que deseas eliminar este proyecto?");
+          if (confirmacion) {
             try {
               await Proyecto.delete(id);
-              alert(`Proyecto ${id} eliminado exitosamente.`);
-              // Re-obtenemos los proyectos actualizados de la base de datos
-              const datosBd = await Proyecto.getAll();
-              // Transformamos la fecha y obtenemos el nuevo array de datos
-              const nuevosDatos = datosBd.map((dato) => {
-                const nuevaFecha = dato.created_at.split("T")[0];
-                const fechaFormateada = `${nuevaFecha.split("-")[2]}/${
-                  nuevaFecha.split("-")[1]
-                }/${nuevaFecha.split("-")[0]}`;
-                return { ...dato, created_at: fechaFormateada };
-              });
-              // Vuelve a pintar la tabla y las tarjetas con los datos actualizados
-              pintaTabla(nuevosDatos);
-              pintaTarjetas(nuevosDatos);
+              alert("Proyecto eliminado correctamente");
+              // Actualiza la vista después de eliminar el proyecto
+              const datosActualizados = await Proyecto.getAll();
+              pintaTabla(datosActualizados);
+              pintaTarjetas(datosActualizados);
             } catch (error) {
-              alert("Error al eliminar el proyecto: " + error.message);
+              alert(`Error eliminando proyecto: ${error.message}`);
             }
           }
         }
       }
-
-      // Si se hizo clic en una celda o en una imagen para ver el detalle
+      // Visualizar detalle del proyecto si click sobre tr de vista tabla
       if (event.target.tagName === "TD") {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        const id = event.target.parentNode.dataset.id;
+        console.log("clic en td");
+        id = event.target.parentNode.dataset.id;
         window.location = `#/proyectoDetalle/${id}`;
       }
+      // Si hacemos clic sobre la imagen de tabla o de vista tarjetas
       if (event.target.classList.contains("verDetalle")) {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        const id = event.target.dataset.id;
+        id = event.target.dataset.id;
         window.location = `#/proyectoDetalle/${id}`;
       }
     });

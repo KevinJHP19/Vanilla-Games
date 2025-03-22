@@ -63,7 +63,9 @@ export const perfiles = [
     email: "javier@example.com",
     contraseña: "123456",
   },
+
 ];
+
 
 // Datos de prueba con proyectos inventados a partir de los usuarios (perfiles) anteriores
 export const proyectos = [
